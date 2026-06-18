@@ -1,0 +1,424 @@
+{
+    "name": "Trolha Tracking API",
+    "version": "1.0.0",
+    "base_path": "/kpi-api",
+    "docs": "/kpi-api/docs",
+    "auth": {
+        "type": "bearer",
+        "header": "Authorization: Bearer <token>",
+        "cookie_fallback": "tt_kpi_token (httpOnly)",
+        "token_ttl_seconds": 28800,
+        "login": {
+            "method": "POST",
+            "path": "/kpi-api/login",
+            "body": [
+                "email",
+                "password"
+            ],
+            "returns": "data.token (JWT), data.token_type, data.expires_in, data.employee"
+        },
+        "logout": {
+            "method": "POST",
+            "path": "/kpi-api/logout"
+        }
+    },
+    "envelope": {
+        "success": {
+            "ok": true,
+            "meta": {
+                "from": "...",
+                "to": "..."
+            },
+            "data": "<payload>"
+        },
+        "error": {
+            "ok": false,
+            "error": {
+                "message": "...",
+                "code": "unauthorized|not_found|bad_request|method_not_allowed"
+            }
+        }
+    },
+    "defaults": {
+        "from": "hoje-29d",
+        "to": "hoje"
+    },
+    "common_params": [
+        {
+            "name": "from",
+            "in": "query",
+            "type": "date",
+            "required": false,
+            "default": "hoje-29d",
+            "description": "Data inicial YYYY-MM-DD"
+        },
+        {
+            "name": "to",
+            "in": "query",
+            "type": "date",
+            "required": false,
+            "default": "hoje",
+            "description": "Data final YYYY-MM-DD"
+        }
+    ],
+    "groups": [
+        "Visao geral",
+        "Encomendas",
+        "Produtos e stock",
+        "Clientes e geografia",
+        "Tendencias"
+    ],
+    "endpoints": [
+        {
+            "group": "Visao geral",
+            "method": "GET",
+            "path": "/kpi-api/overview",
+            "summary": "Bundle com tudo o que o dashboard precisa (carga inicial) + periodo anterior para deltas",
+            "auth": true,
+            "params": [
+                "from",
+                "to"
+            ]
+        },
+        {
+            "group": "Visao geral",
+            "method": "GET",
+            "path": "/kpi-api/kpis",
+            "summary": "KPIs de topo (receita, encomendas, validas, ticket, unidades vendidas, novos clientes, abandono) + periodo anterior + deltas",
+            "auth": true,
+            "params": [
+                "from",
+                "to"
+            ],
+            "returns": "{ current, previous, deltas }"
+        },
+        {
+            "group": "Visao geral",
+            "method": "GET",
+            "path": "/kpi-api/funnel",
+            "summary": "Funil de 6 niveis com % perdida por salto (viu -> carrinho -> checkout -> envio -> pagamento -> encomenda)",
+            "auth": true,
+            "params": [
+                "from",
+                "to"
+            ]
+        },
+        {
+            "group": "Encomendas",
+            "method": "GET",
+            "path": "/kpi-api/orders",
+            "summary": "Resumo: criadas, validas, receita, ticket medio",
+            "auth": true,
+            "params": [
+                "from",
+                "to"
+            ]
+        },
+        {
+            "group": "Encomendas",
+            "method": "GET",
+            "path": "/kpi-api/recent-orders",
+            "summary": "Ultimas encomendas (cliente, total, estado, pagamento)",
+            "auth": true,
+            "params": [
+                "from",
+                "to",
+                {
+                    "name": "limit",
+                    "in": "query",
+                    "type": "integer",
+                    "required": false,
+                    "default": 15,
+                    "description": "Numero de encomendas"
+                }
+            ]
+        },
+        {
+            "group": "Encomendas",
+            "method": "GET",
+            "path": "/kpi-api/orders-list",
+            "summary": "Lista paginada + filtros. Paginacao em meta (total, page, per_page, pages); rows em data",
+            "auth": true,
+            "params": [
+                "from",
+                "to",
+                {
+                    "name": "page",
+                    "in": "query",
+                    "type": "integer",
+                    "required": false,
+                    "default": 1,
+                    "description": "Pagina (1+)"
+                },
+                {
+                    "name": "per_page",
+                    "in": "query",
+                    "type": "integer",
+                    "required": false,
+                    "default": 25,
+                    "description": "Por pagina (1-100)"
+                },
+                {
+                    "name": "state",
+                    "in": "query",
+                    "type": "integer",
+                    "required": false,
+                    "description": "Filtrar por id de estado"
+                },
+                {
+                    "name": "payment",
+                    "in": "query",
+                    "type": "string",
+                    "required": false,
+                    "description": "Filtrar por metodo de pagamento (LIKE)"
+                },
+                {
+                    "name": "search",
+                    "in": "query",
+                    "type": "string",
+                    "required": false,
+                    "description": "Pesquisa por referencia ou nome do cliente"
+                }
+            ]
+        },
+        {
+            "group": "Encomendas",
+            "method": "GET",
+            "path": "/kpi-api/order",
+            "summary": "Detalhe de uma encomenda: cabecalho, linhas de produto, historico de estados",
+            "auth": true,
+            "params": [
+                {
+                    "name": "id",
+                    "in": "query",
+                    "type": "integer",
+                    "required": true,
+                    "description": "ID da encomenda"
+                }
+            ],
+            "errors": [
+                400,
+                404
+            ]
+        },
+        {
+            "group": "Encomendas",
+            "method": "GET",
+            "path": "/kpi-api/payments",
+            "summary": "Quebra por metodo de pagamento (encomendas validas + receita)",
+            "auth": true,
+            "params": [
+                "from",
+                "to"
+            ]
+        },
+        {
+            "group": "Encomendas",
+            "method": "GET",
+            "path": "/kpi-api/states",
+            "summary": "Quebra por estado da encomenda",
+            "auth": true,
+            "params": [
+                "from",
+                "to"
+            ]
+        },
+        {
+            "group": "Encomendas",
+            "method": "GET",
+            "path": "/kpi-api/refunds",
+            "summary": "Valor reembolsado + numero de encomendas com reembolso",
+            "auth": true,
+            "params": [
+                "from",
+                "to"
+            ]
+        },
+        {
+            "group": "Produtos e stock",
+            "method": "GET",
+            "path": "/kpi-api/top-products",
+            "summary": "Best-sellers por quantidade e receita",
+            "auth": true,
+            "params": [
+                "from",
+                "to",
+                {
+                    "name": "limit",
+                    "in": "query",
+                    "type": "integer",
+                    "required": false,
+                    "default": 10,
+                    "description": "Tamanho da lista"
+                }
+            ]
+        },
+        {
+            "group": "Produtos e stock",
+            "method": "GET",
+            "path": "/kpi-api/categories",
+            "summary": "Vendas por categoria (categoria default do produto)",
+            "auth": true,
+            "params": [
+                "from",
+                "to",
+                {
+                    "name": "limit",
+                    "in": "query",
+                    "type": "integer",
+                    "required": false,
+                    "default": 12,
+                    "description": "Tamanho da lista"
+                }
+            ]
+        },
+        {
+            "group": "Produtos e stock",
+            "method": "GET",
+            "path": "/kpi-api/low-stock",
+            "summary": "Produtos com stock baixo/esgotado (nivel produto). Sem intervalo de datas",
+            "auth": true,
+            "params": [
+                {
+                    "name": "threshold",
+                    "in": "query",
+                    "type": "integer",
+                    "required": false,
+                    "default": 5,
+                    "description": "Limiar de quantidade"
+                },
+                {
+                    "name": "limit",
+                    "in": "query",
+                    "type": "integer",
+                    "required": false,
+                    "default": 50,
+                    "description": "Tamanho da lista"
+                }
+            ]
+        },
+        {
+            "group": "Produtos e stock",
+            "method": "GET",
+            "path": "/kpi-api/vouchers",
+            "summary": "Uso de cupoes e desconto dado",
+            "auth": true,
+            "params": [
+                "from",
+                "to",
+                {
+                    "name": "limit",
+                    "in": "query",
+                    "type": "integer",
+                    "required": false,
+                    "default": 20,
+                    "description": "Tamanho da lista"
+                }
+            ]
+        },
+        {
+            "group": "Clientes e geografia",
+            "method": "GET",
+            "path": "/kpi-api/top-customers",
+            "summary": "Top clientes por receita",
+            "auth": true,
+            "params": [
+                "from",
+                "to",
+                {
+                    "name": "limit",
+                    "in": "query",
+                    "type": "integer",
+                    "required": false,
+                    "default": 10,
+                    "description": "Tamanho da lista"
+                }
+            ]
+        },
+        {
+            "group": "Clientes e geografia",
+            "method": "GET",
+            "path": "/kpi-api/customer-mix",
+            "summary": "Novos vs recorrentes no periodo",
+            "auth": true,
+            "params": [
+                "from",
+                "to"
+            ]
+        },
+        {
+            "group": "Clientes e geografia",
+            "method": "GET",
+            "path": "/kpi-api/geography",
+            "summary": "Encomendas/receita por regiao (distrito/cidade da morada de entrega)",
+            "auth": true,
+            "params": [
+                "from",
+                "to",
+                {
+                    "name": "limit",
+                    "in": "query",
+                    "type": "integer",
+                    "required": false,
+                    "default": 20,
+                    "description": "Tamanho da lista"
+                }
+            ]
+        },
+        {
+            "group": "Tendencias",
+            "method": "GET",
+            "path": "/kpi-api/daily",
+            "summary": "Serie diaria de encomendas + receita",
+            "auth": true,
+            "params": [
+                "from",
+                "to"
+            ]
+        },
+        {
+            "group": "Tendencias",
+            "method": "GET",
+            "path": "/kpi-api/monthly",
+            "summary": "Serie mensal (tendencia)",
+            "auth": true,
+            "params": [
+                "from",
+                "to"
+            ]
+        },
+        {
+            "group": "Tendencias",
+            "method": "GET",
+            "path": "/kpi-api/weekday",
+            "summary": "Distribuicao por dia da semana",
+            "auth": true,
+            "params": [
+                "from",
+                "to"
+            ]
+        },
+        {
+            "group": "Tendencias",
+            "method": "GET",
+            "path": "/kpi-api/hour",
+            "summary": "Distribuicao por hora do dia",
+            "auth": true,
+            "params": [
+                "from",
+                "to"
+            ]
+        },
+        {
+            "group": "Tendencias",
+            "method": "GET",
+            "path": "/kpi-api/abandoned-carts",
+            "summary": "Carrinhos abandonados, convertidos e taxa de abandono",
+            "auth": true,
+            "params": [
+                "from",
+                "to"
+            ]
+        }
+    ]
+}

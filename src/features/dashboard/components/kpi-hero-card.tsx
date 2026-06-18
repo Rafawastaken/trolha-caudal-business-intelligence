@@ -1,0 +1,70 @@
+import { ArrowDownRight, ArrowUpRight } from 'lucide-react'
+
+import { Card } from '@/components/ui/card'
+import { formatEur, formatEurCompact } from '@/lib/format'
+import { cn } from '@/lib/utils'
+
+import type { DailyPoint, KpiMetric } from '../schemas'
+import { KpiSpark } from './kpi-spark'
+
+type KpiHeroCardProps = {
+  metric: KpiMetric
+  daily: DailyPoint[]
+  className?: string
+}
+
+/** Cartão de destaque da Receita — a métrica que comanda a leitura do dia. */
+export function KpiHeroCard({ metric, daily, className }: KpiHeroCardProps) {
+  const up = metric.delta >= 0
+  const pct = Math.abs(metric.delta * 100)
+
+  return (
+    <Card
+      className={cn(
+        'relative justify-between gap-0 overflow-hidden bg-[#08131F] px-6 py-5 text-white ring-0',
+        className,
+      )}
+    >
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -top-16 -right-10 size-56 rounded-full bg-[#F5811E]/15 blur-3xl"
+      />
+
+      <div className="relative flex items-start justify-between">
+        <div>
+          <p className="font-mono text-xs tracking-[0.2em] text-[#8DA2B4]">
+            RECEITA
+          </p>
+          <p className="mt-2 font-display text-4xl font-bold tracking-tight tabular-nums">
+            {formatEur(metric.value)}
+          </p>
+        </div>
+        <span
+          className={cn(
+            'inline-flex items-center gap-0.5 rounded-full px-2 py-1 text-xs font-medium tabular-nums',
+            up
+              ? 'bg-emerald-400/15 text-emerald-300'
+              : 'bg-red-400/15 text-red-300',
+          )}
+        >
+          {up ? (
+            <ArrowUpRight className="size-3.5" />
+          ) : (
+            <ArrowDownRight className="size-3.5" />
+          )}
+          {pct.toLocaleString('pt-PT', { maximumFractionDigits: 1 })}%
+        </span>
+      </div>
+
+      <div className="relative mt-4 flex items-end justify-between gap-4">
+        <p className="text-xs text-[#8DA2B4]">
+          vs. {formatEurCompact(metric.previous)} no período anterior
+        </p>
+      </div>
+
+      <div className="relative -mx-1 mt-3 h-16">
+        <KpiSpark data={daily.map((d) => d.revenue)} color="#F5811E" />
+      </div>
+    </Card>
+  )
+}

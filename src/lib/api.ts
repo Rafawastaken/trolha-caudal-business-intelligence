@@ -60,9 +60,10 @@ async function request<T>(
     ? { Authorization: `Bearer ${token}` }
     : {}
 
-  // O login da Trolha API espera `application/x-www-form-urlencoded`. Passa um
-  // URLSearchParams como body e deixamos o fetch definir o content-type; os
-  // restantes endpoints (JSON) seguem o caminho normal.
+  // Por defeito enviamos JSON (incl. o login: POST /kpi-api/login com
+  // { email, password }). Se algum endpoint precisar de
+  // `application/x-www-form-urlencoded`, passa um URLSearchParams como body e
+  // deixamos o fetch definir o content-type.
   const isForm = body instanceof URLSearchParams
   const baseHeaders: Record<string, string> = {
     Accept: 'application/json',

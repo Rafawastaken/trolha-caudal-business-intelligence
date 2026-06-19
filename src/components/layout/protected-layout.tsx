@@ -5,6 +5,8 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 import { useAuth } from '@/features/auth/auth-context'
 import { paths } from '@/paths'
 
+import { AssistantPanel } from '@/features/assistant/components/assistant-panel'
+
 import { Sidebar } from './sidebar'
 import { Topbar } from './topbar'
 
@@ -41,28 +43,21 @@ export function ProtectedLayout() {
           onToggleCollapse={() => setCollapsed((c) => !c)}
         />
 
-        <div className="relative ml-2.5 flex min-w-0 flex-1 flex-col overflow-hidden rounded-2xl border bg-card shadow-sm sm:ml-3">
+        <div className="relative ml-2.5 flex min-w-0 flex-1 flex-col overflow-y-auto rounded-2xl border bg-card shadow-sm sm:ml-3">
           <Topbar
             assistantOpen={assistantOpen}
             onToggleAssistant={() => setAssistantOpen((o) => !o)}
           />
-          <main className="min-h-0 flex-1 overflow-y-auto px-4 pt-5 pb-10 sm:px-6 lg:px-8">
-            <div className="mx-auto w-full max-w-[1400px]">
+          <main className="flex-1 px-4 pt-5 pb-10 sm:px-6 lg:px-8">
+            <div className="mx-auto w-full">
               <Outlet />
             </div>
           </main>
         </div>
 
-        {/* Painel do assistente AI — implementado na Fase 5. */}
+        {/* Painel do assistente AI (Gemini) — lê os KPIs do período e responde. */}
         {assistantOpen && (
-          <aside className="ml-2.5 hidden w-80 shrink-0 flex-col overflow-hidden rounded-2xl border bg-card shadow-sm sm:ml-3 lg:flex">
-            <div className="flex h-14 items-center border-b px-4 font-display text-sm font-semibold">
-              Assistente
-            </div>
-            <div className="flex-1 p-4 text-sm text-muted-foreground">
-              O assistente chega na próxima fase.
-            </div>
-          </aside>
+          <AssistantPanel onClose={() => setAssistantOpen(false)} />
         )}
       </div>
     </TooltipProvider>

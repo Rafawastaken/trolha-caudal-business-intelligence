@@ -27,7 +27,7 @@ export function Topbar({ onToggleAssistant, assistantOpen }: TopbarProps) {
   const displayName = employee?.name ?? employee?.email ?? 'Funcionário'
 
   return (
-    <header className="flex h-14 shrink-0 items-center justify-between gap-3 border-b px-4">
+    <header className="sticky top-0 z-20 flex h-14 shrink-0 items-center justify-between gap-3 border-b border-border/60 bg-card/70 px-4 backdrop-blur-lg supports-[backdrop-filter]:bg-card/60">
       <div className="min-w-0">
         <PeriodPicker />
       </div>

@@ -20,21 +20,27 @@ export function StatTile({
   loading,
 }: StatTileProps) {
   return (
-    <Card size="sm" className="gap-0 px-5 py-4">
-      <div className="flex items-center justify-between">
-        <span className="text-sm text-muted-foreground">{label}</span>
-        {Icon && <Icon className="size-4 text-muted-foreground/70" />}
+    <Card size="sm" className="justify-center px-5 py-4">
+      <div className="flex items-center gap-3.5">
+        {Icon && (
+          <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+            <Icon className="size-5" />
+          </span>
+        )}
+        <div className="min-w-0">
+          <p className="truncate text-sm text-muted-foreground">{label}</p>
+          {loading ? (
+            <Skeleton className="mt-1 h-7 w-20" />
+          ) : (
+            <p className="font-display text-2xl font-bold leading-tight tracking-tight tabular-nums">
+              {value}
+            </p>
+          )}
+          {sublabel && (
+            <p className="mt-0.5 text-xs text-muted-foreground">{sublabel}</p>
+          )}
+        </div>
       </div>
-      {loading ? (
-        <Skeleton className="mt-2 h-8 w-24" />
-      ) : (
-        <span className="mt-2 font-display text-2xl font-bold tracking-tight tabular-nums">
-          {value}
-        </span>
-      )}
-      {sublabel && (
-        <p className="mt-1 text-xs text-muted-foreground">{sublabel}</p>
-      )}
     </Card>
   )
 }

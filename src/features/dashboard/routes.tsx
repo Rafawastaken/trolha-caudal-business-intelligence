@@ -1,7 +1,14 @@
 import type { RouteObject } from 'react-router-dom'
 
-import { DashboardPage } from './pages/dashboard-page'
+import { lazyRoute } from '@/lib/lazy-route'
 
 export const dashboardRoutes: RouteObject[] = [
-  { index: true, element: <DashboardPage /> },
+  {
+    index: true,
+    element: lazyRoute(() =>
+      import('./pages/dashboard-page').then((m) => ({
+        default: m.DashboardPage,
+      })),
+    ),
+  },
 ]

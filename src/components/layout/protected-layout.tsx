@@ -1,14 +1,21 @@
-import { useEffect, useState } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
 
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { useAuth } from '@/features/auth/auth-context'
 import { paths } from '@/paths'
 
-import { AssistantPanel } from '@/features/assistant/components/assistant-panel'
-
+import { RouteFallback } from './route-fallback'
 import { Sidebar } from './sidebar'
 import { Topbar } from './topbar'
+
+// Lazy — tira o @google/genai (e deps de markdown) do bundle inicial; carrega
+// só quando o assistente é aberto pela 1ª vez.
+const AssistantPanel = lazy(() =>
+  import('@/features/assistant/components/assistant-panel').then((m) => ({
+    default: m.AssistantPanel,
+  })),
+)
 
 const COLLAPSED_KEY = 'tt_sidebar_collapsed'
 
@@ -50,14 +57,18 @@ export function ProtectedLayout() {
           />
           <main className="flex-1 px-4 pt-5 pb-10 sm:px-6 lg:px-8">
             <div className="mx-auto w-full">
-              <Outlet />
+              <Suspense fallback={<RouteFallback />}>
+                <Outlet />
+              </Suspense>
             </div>
           </main>
         </div>
 
         {/* Painel do assistente AI (Gemini) — lê os KPIs do período e responde. */}
         {assistantOpen && (
-          <AssistantPanel onClose={() => setAssistantOpen(false)} />
+          <Suspense fallback={null}>
+            <AssistantPanel onClose={() => setAssistantOpen(false)} />
+          </Suspense>
         )}
       </div>
     </TooltipProvider>

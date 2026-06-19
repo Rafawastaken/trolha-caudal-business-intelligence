@@ -1,9 +1,20 @@
 import type { RouteObject } from 'react-router-dom'
 
-import { OrderDetailPage } from './pages/order-detail-page'
-import { OrdersPage } from './pages/orders-page'
+import { lazyRoute } from '@/lib/lazy-route'
 
 export const ordersRoutes: RouteObject[] = [
-  { path: 'orders', element: <OrdersPage /> },
-  { path: 'orders/:id', element: <OrderDetailPage /> },
+  {
+    path: 'orders',
+    element: lazyRoute(() =>
+      import('./pages/orders-page').then((m) => ({ default: m.OrdersPage })),
+    ),
+  },
+  {
+    path: 'orders/:id',
+    element: lazyRoute(() =>
+      import('./pages/order-detail-page').then((m) => ({
+        default: m.OrderDetailPage,
+      })),
+    ),
+  },
 ]

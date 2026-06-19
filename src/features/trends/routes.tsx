@@ -1,10 +1,12 @@
 import type { RouteObject } from 'react-router-dom'
 
-import { TrendsPage } from './pages/trends-page'
+import { lazyRoute } from '@/lib/lazy-route'
 
 export const trendsRoutes: RouteObject[] = [
   {
     path: 'trends',
-    element: <TrendsPage />,
+    element: lazyRoute(() =>
+      import('./pages/trends-page').then((m) => ({ default: m.TrendsPage })),
+    ),
   },
 ]

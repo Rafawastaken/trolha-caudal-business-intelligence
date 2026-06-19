@@ -54,10 +54,13 @@ export function DashboardPage() {
 function DashboardSkeleton() {
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        {Array.from({ length: 7 }).map((_, i) => (
-          <Skeleton key={i} className="h-28 rounded-xl" />
-        ))}
+      <div className="space-y-3">
+        <Skeleton className="h-36 rounded-xl" />
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Skeleton key={i} className="h-28 rounded-xl" />
+          ))}
+        </div>
       </div>
       <div className="grid gap-4 lg:grid-cols-3">
         <Skeleton className="h-96 rounded-xl lg:col-span-2" />

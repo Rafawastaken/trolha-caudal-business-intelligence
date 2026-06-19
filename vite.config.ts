@@ -13,6 +13,7 @@ export default defineConfig(({ mode }) => {
   const target = env.VITE_API_PROXY_TARGET || 'https://trolha.pt'
 
   return {
+    base: '/kpi/',
     resolve: { tsconfigPaths: true },
     plugins: [tailwindcss(), react()],
     server: {

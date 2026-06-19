@@ -12,19 +12,22 @@ import { reportsRoutes } from '@/features/reports/routes'
 import { settingsRoutes } from '@/features/settings/routes'
 import { trendsRoutes } from '@/features/trends/routes'
 
-export const router = createBrowserRouter([
-  { element: <PublicLayout />, children: authRoutes },
-  {
-    element: <ProtectedLayout />,
-    children: [
-      ...dashboardRoutes,
-      ...ordersRoutes,
-      ...productsRoutes,
-      ...customersRoutes,
-      ...trendsRoutes,
-      ...reportsRoutes,
-      ...settingsRoutes,
-      { path: '*', element: <NotFoundPage /> },
-    ],
-  },
-])
+export const router = createBrowserRouter(
+  [
+    { element: <PublicLayout />, children: authRoutes },
+    {
+      element: <ProtectedLayout />,
+      children: [
+        ...dashboardRoutes,
+        ...ordersRoutes,
+        ...productsRoutes,
+        ...customersRoutes,
+        ...trendsRoutes,
+        ...reportsRoutes,
+        ...settingsRoutes,
+        { path: '*', element: <NotFoundPage /> },
+      ],
+    },
+  ],
+  { basename: import.meta.env.BASE_URL },
+)

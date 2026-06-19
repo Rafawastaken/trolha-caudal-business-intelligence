@@ -1,17 +1,6 @@
 import type { ReactNode } from 'react'
 import { NavLink } from 'react-router-dom'
-import {
-  ChevronsLeft,
-  ChevronsRight,
-  FileText,
-  LayoutDashboard,
-  type LucideIcon,
-  Package,
-  Settings,
-  ShoppingCart,
-  TrendingUp,
-  Users,
-} from 'lucide-react'
+import { ChevronsLeft, ChevronsRight } from 'lucide-react'
 
 import { TrolhaMark } from '@/components/brand/trolha-mark'
 import { TrolhaWordmark } from '@/components/brand/trolha-wordmark'
@@ -21,39 +10,20 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
-import { paths } from '@/paths'
 
-type NavItem = {
-  label: string
-  to: string
-  icon: LucideIcon
-  /** end => match exato (evita o Dashboard "/" ficar sempre ativo). */
-  end?: boolean
-}
-
-const MAIN_NAV: NavItem[] = [
-  { label: 'Dashboard', to: paths.dashboard, icon: LayoutDashboard, end: true },
-  { label: 'Encomendas', to: paths.orders.list, icon: ShoppingCart },
-  { label: 'Produtos & Stock', to: paths.products, icon: Package },
-  { label: 'Clientes', to: paths.customers, icon: Users },
-  { label: 'Tendências', to: paths.trends, icon: TrendingUp },
-  { label: 'Relatórios', to: paths.reports, icon: FileText },
-]
-
-const SECONDARY_NAV: NavItem[] = [
-  { label: 'Definições', to: paths.settings, icon: Settings },
-]
+import { MAIN_NAV, SECONDARY_NAV, type NavItem } from './nav-items'
 
 type SidebarProps = {
   collapsed: boolean
   onToggleCollapse: () => void
 }
 
+/** Sidebar persistente — só em ecrãs grandes (no mobile usa-se o MobileNav). */
 export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
   return (
     <aside
       className={cn(
-        'flex shrink-0 flex-col overflow-hidden rounded-2xl border bg-sidebar shadow-sm transition-[width] duration-300',
+        'hidden shrink-0 flex-col overflow-hidden rounded-2xl border bg-sidebar shadow-sm transition-[width] duration-300 lg:flex',
         collapsed ? 'w-16' : 'w-60',
       )}
     >

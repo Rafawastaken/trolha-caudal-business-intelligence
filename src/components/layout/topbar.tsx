@@ -11,6 +11,7 @@ import { useAuth } from '@/features/auth/auth-context'
 import { useLogout } from '@/features/auth/hooks'
 import { useTheme } from '@/lib/theme'
 
+import { MobileNav } from './mobile-nav'
 import { PeriodPicker } from './period-picker'
 
 type TopbarProps = {
@@ -28,7 +29,8 @@ export function Topbar({ onToggleAssistant, assistantOpen }: TopbarProps) {
 
   return (
     <header className="sticky top-0 z-20 flex h-14 shrink-0 items-center justify-between gap-3 border-b border-border/60 bg-card/70 px-4 backdrop-blur-lg supports-[backdrop-filter]:bg-card/60">
-      <div className="min-w-0">
+      <div className="flex min-w-0 items-center gap-1.5">
+        <MobileNav />
         <PeriodPicker />
       </div>
 

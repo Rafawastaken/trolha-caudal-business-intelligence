@@ -24,7 +24,7 @@ export function KpiHeroCard({ metric, daily, className }: KpiHeroCardProps) {
   return (
     <Card
       className={cn(
-        'relative flex-row items-center gap-6 overflow-hidden bg-[#08131F] px-6 py-8 text-white ring-0',
+        'relative gap-4 overflow-hidden bg-[#08131F] px-6 py-8 text-white ring-0 sm:flex-row sm:items-center sm:gap-6',
         className,
       )}
     >

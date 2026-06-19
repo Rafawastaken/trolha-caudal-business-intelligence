@@ -4,6 +4,7 @@ import { Maximize2, Minimize2, Send, Sparkles, Trash2, X } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
+import { useMediaQuery } from '@/lib/use-media-query'
 
 import { assistantConfigured } from '../gemini'
 import { useAssistant } from '../use-assistant'
@@ -22,20 +23,31 @@ export function AssistantPanel({ onClose }: { onClose?: () => void }) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const configured = assistantConfigured()
 
+  // Em mobile (<lg) não há painel lateral — o assistente é sempre modal.
+  const isDesktop = useMediaQuery('(min-width: 1024px)')
+  const asModal = expanded || !isDesktop
+
+  // No desktop, "reduzir" volta ao painel; em mobile fecha (não há painel).
+  const collapseOrClose = () => {
+    if (isDesktop) setExpanded(false)
+    else onClose?.()
+  }
+
   useEffect(() => {
     const el = scrollRef.current
     if (el) el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' })
   }, [messages])
 
-  // ESC reduz a modal para painel (não fecha — pode estar a meio de uma conversa).
+  // ESC: reduz a modal para painel (desktop) ou fecha (mobile).
   useEffect(() => {
-    if (!expanded) return
+    if (!asModal) return
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setExpanded(false)
+      if (e.key === 'Escape') collapseOrClose()
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [expanded])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [asModal, isDesktop])
 
   function submit() {
     const t = input.trim()
@@ -68,19 +80,21 @@ export function AssistantPanel({ onClose }: { onClose?: () => void }) {
               <Trash2 className="size-4" />
             </Button>
           )}
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            onClick={() => setExpanded((v) => !v)}
-            aria-label={expanded ? 'Reduzir' : 'Expandir para modal'}
-            title={expanded ? 'Reduzir a painel' : 'Expandir para modal'}
-          >
-            {expanded ? (
-              <Minimize2 className="size-4" />
-            ) : (
-              <Maximize2 className="size-4" />
-            )}
-          </Button>
+          {isDesktop && (
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={() => setExpanded((v) => !v)}
+              aria-label={expanded ? 'Reduzir' : 'Expandir para modal'}
+              title={expanded ? 'Reduzir a painel' : 'Expandir para modal'}
+            >
+              {expanded ? (
+                <Minimize2 className="size-4" />
+              ) : (
+                <Maximize2 className="size-4" />
+              )}
+            </Button>
+          )}
           {onClose && (
             <Button
               variant="ghost"
@@ -163,14 +177,14 @@ export function AssistantPanel({ onClose }: { onClose?: () => void }) {
     </>
   )
 
-  // Modo modal — portal para o body com backdrop. Clique no backdrop reduz a
-  // painel (não fecha).
-  if (expanded) {
+  // Modo modal — portal para o body com backdrop. Sempre em mobile; em desktop
+  // quando expandido. Clique no backdrop reduz a painel (desktop) ou fecha.
+  if (asModal) {
     return createPortal(
       <div
         className="fixed inset-0 z-50 flex animate-in items-center justify-center bg-black/40 p-4 duration-150 fade-in supports-[backdrop-filter]:backdrop-blur-sm sm:p-6"
         onClick={(e) => {
-          if (e.target === e.currentTarget) setExpanded(false)
+          if (e.target === e.currentTarget) collapseOrClose()
         }}
       >
         <div className="flex h-full max-h-[90vh] w-full max-w-3xl animate-in flex-col overflow-hidden rounded-2xl border bg-card shadow-2xl duration-150 zoom-in-95">

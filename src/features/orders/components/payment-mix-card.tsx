@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { formatEur, formatNum } from '@/lib/format'
+import { formatEur, formatNum, formatPercent } from '@/lib/format'
 
 import { usePayments } from '../queries'
 
@@ -8,6 +8,7 @@ import { usePayments } from '../queries'
 export function PaymentMixCard() {
   const { data, isLoading } = usePayments()
   const max = data?.reduce((m, p) => Math.max(m, p.revenue), 0) ?? 0
+  const total = data?.reduce((sum, p) => sum + p.revenue, 0) ?? 0
 
   return (
     <Card>
@@ -22,10 +23,15 @@ export function PaymentMixCard() {
 
         {data?.map((p) => (
           <div key={p.method} className="space-y-1">
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">{p.method}</span>
-              <span className="font-medium tabular-nums">
-                {formatEur(p.revenue)}
+            <div className="flex items-center justify-between gap-2 text-sm">
+              <span className="min-w-0 truncate text-muted-foreground">
+                {p.method}
+              </span>
+              <span className="flex shrink-0 items-baseline gap-1.5 tabular-nums">
+                <span className="font-medium">{formatEur(p.revenue)}</span>
+                <span className="text-xs text-muted-foreground">
+                  {formatPercent(total ? p.revenue / total : 0)}
+                </span>
               </span>
             </div>
             <div className="flex items-center gap-2">

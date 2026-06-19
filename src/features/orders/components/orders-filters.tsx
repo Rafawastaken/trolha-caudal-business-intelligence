@@ -10,15 +10,8 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 
-import { ORDER_STATES } from '../order-states'
-
-const PAYMENT_METHODS = [
-  'Multibanco',
-  'MB WAY',
-  'Cartão de crédito',
-  'PayPal',
-  'Transferência bancária',
-]
+import { orderState } from '../order-states'
+import { useOrderStates, usePayments } from '../queries'
 
 const ALL = 'all'
 
@@ -39,6 +32,11 @@ export function OrdersFilters({
   payment,
   onPaymentChange,
 }: OrdersFiltersProps) {
+  // Opções vindas dos dados reais do período (ids/estados e métodos de
+  // pagamento efetivos) em vez de listas fixas que não batem com o backend.
+  const { data: states } = useOrderStates()
+  const { data: payments } = usePayments()
+
   const hasFilters = !!search || state !== undefined || payment !== undefined
 
   return (
@@ -63,9 +61,9 @@ export function OrdersFilters({
         </SelectTrigger>
         <SelectContent>
           <SelectItem value={ALL}>Todos os estados</SelectItem>
-          {ORDER_STATES.map((s) => (
+          {(states ?? []).map((s) => (
             <SelectItem key={s.id} value={String(s.id)}>
-              {s.label}
+              {s.label ?? orderState(s.id).label}
             </SelectItem>
           ))}
         </SelectContent>
@@ -80,9 +78,9 @@ export function OrdersFilters({
         </SelectTrigger>
         <SelectContent>
           <SelectItem value={ALL}>Todos os pagamentos</SelectItem>
-          {PAYMENT_METHODS.map((m) => (
-            <SelectItem key={m} value={m}>
-              {m}
+          {(payments ?? []).map((p) => (
+            <SelectItem key={p.method} value={p.method}>
+              {p.method}
             </SelectItem>
           ))}
         </SelectContent>

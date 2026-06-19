@@ -89,11 +89,11 @@ export function OrdersPage() {
             <div className="border-b p-4">
               <OrdersFilters
                 search={search}
-                onSearchChange={setSearch}
+                onSearchChange={changeSearch}
                 state={state}
-                onStateChange={setState}
+                onStateChange={changeState}
                 payment={payment}
-                onPaymentChange={setPayment}
+                onPaymentChange={changePayment}
               />
             </div>
 

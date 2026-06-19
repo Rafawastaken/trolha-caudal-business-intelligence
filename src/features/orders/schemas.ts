@@ -54,6 +54,8 @@ export type PaymentBreakdownItem = z.infer<typeof paymentBreakdownItemSchema>
 
 export const stateBreakdownItemSchema = z.object({
   id: z.number(),
+  /** Nome do estado vindo da API (preferido sobre o catálogo por id). */
+  label: z.string().optional(),
   count: z.number(),
 })
 export type StateBreakdownItem = z.infer<typeof stateBreakdownItemSchema>
@@ -70,7 +72,9 @@ export const orderLineSchema = z.object({
 export type OrderLine = z.infer<typeof orderLineSchema>
 
 export const orderHistoryEntrySchema = z.object({
-  stateId: z.number(),
+  stateId: z.number().optional(),
+  /** Nome do estado vindo da API (preferido sobre o catálogo por id). */
+  label: z.string().optional(),
   at: z.string(), // ISO datetime
 })
 export type OrderHistoryEntry = z.infer<typeof orderHistoryEntrySchema>
@@ -83,6 +87,8 @@ export const orderDetailSchema = z.object({
   phone: z.string().optional(),
   date: z.string(),
   stateId: z.number(),
+  /** Nome do estado atual vindo da API (preferido sobre o catálogo por id). */
+  stateLabel: z.string().optional(),
   payment: z.string(),
   shippingCity: z.string().optional(),
   subtotal: z.number(),

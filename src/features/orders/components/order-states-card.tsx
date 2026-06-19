@@ -22,14 +22,19 @@ export function OrderStatesCard() {
           ))}
 
         {data?.map((s) => {
-          const label = orderState(s.id).label
+          const label = s.label ?? orderState(s.id).label
           const pct = total ? (s.count / total) * 100 : 0
           return (
             <div key={s.id} className="space-y-1">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">{label}</span>
-                <span className="font-medium tabular-nums">
-                  {formatNum(s.count)}
+              <div className="flex items-center justify-between gap-2 text-sm">
+                <span className="min-w-0 truncate text-muted-foreground">
+                  {label}
+                </span>
+                <span className="flex shrink-0 items-baseline gap-1.5 tabular-nums">
+                  <span className="font-medium">{formatNum(s.count)}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {Math.round(pct)}%
+                  </span>
                 </span>
               </div>
               <div className="h-2 w-full overflow-hidden rounded-full bg-muted">

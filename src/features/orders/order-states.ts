@@ -42,3 +42,19 @@ export function orderState(id: number): OrderState {
     }
   )
 }
+
+/**
+ * Deriva o "tone" (cor) a partir do NOME do estado. A API real devolve estados
+ * por nome (ids do PrestaShop não batem com o catálogo), por isso resolvemos a
+ * cor por palavras-chave do nome em vez do id.
+ */
+export function toneFromName(name: string | undefined): StatusTone {
+  const n = (name ?? '').toLowerCase()
+  if (/cancel/.test(n)) return 'cancelled'
+  if (/reembols|refund|devolv/.test(n)) return 'refunded'
+  if (/entreg/.test(n)) return 'success'
+  if (/envi|expedi/.test(n)) return 'shipped'
+  if (/process|prepar|pago|aceite|confirmad/.test(n)) return 'progress'
+  if (/espera|aguard|pendente|pagamento/.test(n)) return 'pending'
+  return 'pending'
+}

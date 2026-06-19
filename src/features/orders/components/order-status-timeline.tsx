@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 
-import { orderState, type StatusTone } from '../order-states'
+import { orderState, toneFromName, type StatusTone } from '../order-states'
 import type { OrderHistoryEntry } from '../schemas'
 
 const DOT_CLASSES: Record<StatusTone, string> = {
@@ -36,14 +36,17 @@ export function OrderStatusTimeline({
       <CardContent>
         <ol className="relative space-y-5 border-l pl-5">
           {history.map((entry, i) => {
-            const state = orderState(entry.stateId)
+            const tone: StatusTone = entry.label
+              ? toneFromName(entry.label)
+              : orderState(entry.stateId ?? 0).tone
+            const label = entry.label ?? orderState(entry.stateId ?? 0).label
             const isLast = i === history.length - 1
             return (
               <li key={i} className="relative">
                 <span
                   className={cn(
                     'absolute top-0.5 -left-[1.4rem] size-2.5 rounded-full ring-4 ring-card',
-                    DOT_CLASSES[state.tone],
+                    DOT_CLASSES[tone],
                   )}
                 />
                 <p
@@ -52,7 +55,7 @@ export function OrderStatusTimeline({
                     !isLast && 'text-muted-foreground',
                   )}
                 >
-                  {state.label}
+                  {label}
                 </p>
                 <p className="text-xs text-muted-foreground">
                   {formatDateTime(entry.at)}

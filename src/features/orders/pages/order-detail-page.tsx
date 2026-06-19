@@ -45,7 +45,7 @@ export function OrderDetailPage() {
             <h1 className="font-display text-2xl font-bold tracking-tight">
               {order.reference}
             </h1>
-            <OrderStatusBadge stateId={order.stateId} />
+            <OrderStatusBadge stateId={order.stateId} label={order.stateLabel} />
           </div>
 
           <div className="grid gap-4 lg:grid-cols-3">

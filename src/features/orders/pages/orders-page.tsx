@@ -105,7 +105,7 @@ export function OrdersPage() {
 
       <OrdersSummary />
 
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <div className="overflow-hidden rounded-xl border bg-card shadow-xs ring-1 ring-foreground/10">
             <div className="border-b p-4">

@@ -20,7 +20,7 @@ export function CustomersPage() {
 
       <CustomersSummary />
 
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <TopCustomersCard />
         </div>
@@ -29,7 +29,7 @@ export function CustomersPage() {
         </div>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <GeographyCard />
         </div>

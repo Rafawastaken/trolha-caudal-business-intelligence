@@ -17,7 +17,7 @@ export function ProductsPage() {
         description={`Best-sellers, categorias e stock · ${formatPtDate(period.from)} – ${formatPtDate(period.to)}`}
       />
 
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <TopProductsCard />
         </div>
@@ -26,7 +26,7 @@ export function ProductsPage() {
         </div>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <LowStockCard />
         </div>

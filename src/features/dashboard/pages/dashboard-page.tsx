@@ -37,7 +37,7 @@ export function DashboardPage() {
       {data && (
         <>
           <KpiGrid kpis={data.kpis} daily={data.daily} />
-          <div className="grid gap-4 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
             <div className="lg:col-span-2">
               <RevenueTrendCard daily={data.daily} />
             </div>
@@ -62,7 +62,7 @@ function DashboardSkeleton() {
           ))}
         </div>
       </div>
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Skeleton className="h-96 rounded-xl lg:col-span-2" />
         <Skeleton className="h-96 rounded-xl" />
       </div>

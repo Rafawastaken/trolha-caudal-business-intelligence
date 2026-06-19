@@ -38,20 +38,22 @@ export function KpiCard({
     <Card
       size="sm"
       className={cn(
-        'justify-center px-5 py-4',
+        'justify-center px-4 py-4 sm:px-5',
         to && 'h-full transition-shadow hover:ring-primary/30',
         className,
       )}
     >
-      <div className="flex items-center gap-3.5">
-        <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-          <Icon className="size-5" />
+      <div className="flex items-center gap-3 sm:gap-3.5">
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary sm:size-11">
+          <Icon className="size-4 sm:size-5" />
         </span>
 
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm text-muted-foreground">{label}</p>
+          <p className="text-xs leading-tight text-muted-foreground sm:text-sm">
+            {label}
+          </p>
           <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
-            <span className="font-display text-2xl font-bold leading-tight tracking-tight tabular-nums">
+            <span className="font-display text-xl font-bold leading-tight tracking-tight tabular-nums sm:text-2xl">
               {value}
             </span>
             <span

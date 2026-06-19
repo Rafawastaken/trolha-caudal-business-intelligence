@@ -48,7 +48,7 @@ export function OrderDetailPage() {
             <OrderStatusBadge stateId={order.stateId} label={order.stateLabel} />
           </div>
 
-          <div className="grid gap-4 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
             <div className="lg:col-span-2">
               <div className="overflow-hidden rounded-xl border bg-card shadow-xs ring-1 ring-foreground/10">
                 <div className="border-b px-5 py-4 font-heading text-base font-medium">
@@ -81,7 +81,7 @@ function DetailSkeleton() {
   return (
     <div className="space-y-6">
       <Skeleton className="h-8 w-48" />
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Skeleton className="h-80 rounded-xl lg:col-span-2" />
         <div className="space-y-4">
           <Skeleton className="h-48 rounded-xl" />

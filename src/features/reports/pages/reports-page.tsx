@@ -16,7 +16,7 @@ export function ReportsPage() {
         description={`Exporta os dados do período em CSV (abre no Excel) · ${formatPtDate(period.from)} – ${formatPtDate(period.to)}`}
       />
 
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {REPORTS.map((report) => (
           <ReportCard key={report.id} report={report} />
         ))}

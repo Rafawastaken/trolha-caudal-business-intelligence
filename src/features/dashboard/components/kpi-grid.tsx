@@ -8,6 +8,7 @@ import {
 } from 'lucide-react'
 
 import { formatEur, formatNum, formatPercent } from '@/lib/format'
+import { paths } from '@/paths'
 
 import type { DailyPoint, DashboardKpis } from '../schemas'
 import { KpiCard } from './kpi-card'
@@ -29,30 +30,35 @@ export function KpiGrid({ kpis, daily }: KpiGridProps) {
           value={formatNum(kpis.orders.value)}
           delta={kpis.orders.delta}
           icon={ShoppingCart}
+          to={paths.orders.list}
         />
         <KpiCard
           label="Encomendas válidas"
           value={formatNum(kpis.validOrders.value)}
           delta={kpis.validOrders.delta}
           icon={PackageCheck}
+          to={paths.orders.list}
         />
         <KpiCard
           label="Ticket médio"
           value={formatEur(kpis.avgTicket.value)}
           delta={kpis.avgTicket.delta}
           icon={Receipt}
+          to={paths.orders.list}
         />
         <KpiCard
           label="Unidades vendidas"
           value={formatNum(kpis.unitsSold.value)}
           delta={kpis.unitsSold.delta}
           icon={ShoppingBag}
+          to={paths.products}
         />
         <KpiCard
           label="Novos clientes"
           value={formatNum(kpis.newCustomers.value)}
           delta={kpis.newCustomers.delta}
           icon={UserPlus}
+          to={paths.customers}
         />
         <KpiCard
           label="Taxa de abandono"
@@ -61,6 +67,7 @@ export function KpiGrid({ kpis, daily }: KpiGridProps) {
           icon={TrendingDown}
           invertDelta
           hint="menos é melhor · vs. anterior"
+          to={paths.trends}
         />
       </div>
     </div>

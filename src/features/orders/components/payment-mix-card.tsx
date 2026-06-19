@@ -1,6 +1,9 @@
+import { Link } from 'react-router-dom'
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { formatEur, formatNum, formatPercent } from '@/lib/format'
+import { paths } from '@/paths'
 
 import { usePayments } from '../queries'
 
@@ -22,7 +25,12 @@ export function PaymentMixCard() {
           ))}
 
         {data?.map((p) => (
-          <div key={p.method} className="space-y-1">
+          <Link
+            key={p.method}
+            to={`${paths.orders.list}?payment=${encodeURIComponent(p.method)}`}
+            title={`Ver encomendas · ${p.method}`}
+            className="-mx-2 block space-y-1 rounded-md px-2 py-1 transition-colors hover:bg-muted/60"
+          >
             <div className="flex items-center justify-between gap-2 text-sm">
               <span className="min-w-0 truncate text-muted-foreground">
                 {p.method}
@@ -45,7 +53,7 @@ export function PaymentMixCard() {
                 {formatNum(p.orders)}
               </span>
             </div>
-          </div>
+          </Link>
         ))}
 
         {data && data.length === 0 && (

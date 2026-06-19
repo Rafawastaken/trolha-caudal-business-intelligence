@@ -1,4 +1,5 @@
 import { ArrowDownRight, ArrowUpRight, type LucideIcon } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
@@ -14,6 +15,8 @@ type KpiCardProps = {
   hint?: string
   /** Classes extra no cartão (ex.: `h-full` para alinhar com o hero). */
   className?: string
+  /** Se definido, o cartão liga (drill-down) para esta rota. */
+  to?: string
 }
 
 export function KpiCard({
@@ -24,14 +27,22 @@ export function KpiCard({
   invertDelta = false,
   hint,
   className,
+  to,
 }: KpiCardProps) {
   const up = delta >= 0
   // "Bom" = subiu (ou desceu, se invertido). Define a cor do badge.
   const good = invertDelta ? !up : up
   const pct = Math.abs(delta * 100)
 
-  return (
-    <Card size="sm" className={cn('justify-center px-5 py-4', className)}>
+  const card = (
+    <Card
+      size="sm"
+      className={cn(
+        'justify-center px-5 py-4',
+        to && 'h-full transition-shadow hover:ring-primary/30',
+        className,
+      )}
+    >
       <div className="flex items-center gap-3.5">
         <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
           <Icon className="size-5" />
@@ -66,4 +77,16 @@ export function KpiCard({
       </div>
     </Card>
   )
+
+  if (to) {
+    return (
+      <Link
+        to={to}
+        className="block rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+      >
+        {card}
+      </Link>
+    )
+  }
+  return card
 }

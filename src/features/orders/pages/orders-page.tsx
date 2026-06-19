@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { AlertCircle, Download, Inbox } from 'lucide-react'
 
 import { PageHeader } from '@/components/layout/page-header'
@@ -18,39 +19,60 @@ const PER_PAGE = 25
 
 export function OrdersPage() {
   const { period } = usePeriod()
-  const [page, setPage] = useState(1)
+
+  // Estado/pagamento/página vivem na URL → drill-down deep-linkable (ex.: os
+  // cards Pagamentos/Estados ligam para ?payment=… / ?state=…) e o botão
+  // "voltar" funciona. A pesquisa fica local (com debounce).
+  const [searchParams, setSearchParams] = useSearchParams()
+  const page = Math.max(1, Number(searchParams.get('page')) || 1)
+  const state = searchParams.get('state')
+    ? Number(searchParams.get('state'))
+    : undefined
+  const payment = searchParams.get('payment') || undefined
+
   const [search, setSearch] = useState('')
   const [debounced, setDebounced] = useState('')
-  const [state, setState] = useState<number | undefined>()
-  const [payment, setPayment] = useState<string | undefined>()
-
-  // debounce da pesquisa
   useEffect(() => {
     const t = setTimeout(() => setDebounced(search), 300)
     return () => clearTimeout(t)
   }, [search])
+
+  const patchParams = useCallback(
+    (patch: Record<string, string | null>) => {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev)
+          for (const [k, v] of Object.entries(patch)) {
+            if (v == null || v === '') next.delete(k)
+            else next.set(k, v)
+          }
+          return next
+        },
+        { replace: true },
+      )
+    },
+    [setSearchParams],
+  )
+
+  const setPage = (n: number) => patchParams({ page: n > 1 ? String(n) : null })
 
   // reset de página quando o período global muda (ajuste em render — padrão React)
   const periodKey = `${period.from}|${period.to}`
   const [prevPeriodKey, setPrevPeriodKey] = useState(periodKey)
   if (periodKey !== prevPeriodKey) {
     setPrevPeriodKey(periodKey)
-    setPage(1)
+    if (page !== 1) setPage(1)
   }
 
   // handlers de filtro que voltam sempre à 1ª página
   const changeSearch = (v: string) => {
     setSearch(v)
-    setPage(1)
+    if (page !== 1) setPage(1)
   }
-  const changeState = (v?: number) => {
-    setState(v)
-    setPage(1)
-  }
-  const changePayment = (v?: string) => {
-    setPayment(v)
-    setPage(1)
-  }
+  const changeState = (v?: number) =>
+    patchParams({ state: v != null ? String(v) : null, page: null })
+  const changePayment = (v?: string) =>
+    patchParams({ payment: v ?? null, page: null })
 
   const { data, isLoading, isError, error, isPlaceholderData } = useOrdersList({
     page,

@@ -1,6 +1,9 @@
+import { Link } from 'react-router-dom'
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { formatNum } from '@/lib/format'
+import { paths } from '@/paths'
 
 import { orderState } from '../order-states'
 import { useOrderStates } from '../queries'
@@ -25,7 +28,12 @@ export function OrderStatesCard() {
           const label = s.label ?? orderState(s.id).label
           const pct = total ? (s.count / total) * 100 : 0
           return (
-            <div key={s.id} className="space-y-1">
+            <Link
+              key={s.id}
+              to={`${paths.orders.list}?state=${s.id}`}
+              title={`Ver encomendas · ${label}`}
+              className="-mx-2 block space-y-1 rounded-md px-2 py-1 transition-colors hover:bg-muted/60"
+            >
               <div className="flex items-center justify-between gap-2 text-sm">
                 <span className="min-w-0 truncate text-muted-foreground">
                   {label}
@@ -43,7 +51,7 @@ export function OrderStatesCard() {
                   style={{ width: `${pct}%` }}
                 />
               </div>
-            </div>
+            </Link>
           )
         })}
       </CardContent>

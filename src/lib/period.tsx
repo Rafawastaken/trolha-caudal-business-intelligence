@@ -72,7 +72,7 @@ function toRange(r: { since: string; until: string }) {
 }
 
 const STORAGE_KEY = 'tt_period'
-const DEFAULT_PRESET: Exclude<PresetKey, 'custom'> = 'last30'
+const DEFAULT_PRESET: Exclude<PresetKey, 'custom'> = 'last90'
 
 function readInitial(): Period {
   if (typeof localStorage !== 'undefined') {

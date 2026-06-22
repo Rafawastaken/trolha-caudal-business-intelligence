@@ -9,6 +9,7 @@ import {
 import { Separator } from '@/components/ui/separator'
 import { useAuth } from '@/features/auth/auth-context'
 import { useLogout } from '@/features/auth/hooks'
+import { LiveUsersBadge } from '@/features/presence/components/live-users-badge'
 import { useTheme } from '@/lib/theme'
 
 import { MobileNav } from './mobile-nav'
@@ -35,6 +36,8 @@ export function Topbar({ onToggleAssistant, assistantOpen }: TopbarProps) {
       </div>
 
       <div className="flex items-center gap-1.5">
+        <LiveUsersBadge />
+
         <Button
           variant={assistantOpen ? 'secondary' : 'outline'}
           size="sm"

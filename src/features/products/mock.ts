@@ -37,7 +37,7 @@ const CATALOG: SeedProduct[] = [
 
 const TODAY = new Date()
 
-export function mockTopProducts(): TopProduct[] {
+export function mockTopProducts(limit = 10): TopProduct[] {
   return CATALOG.map((p) => ({
     id: p.id,
     name: p.name,
@@ -45,7 +45,7 @@ export function mockTopProducts(): TopProduct[] {
     revenue: Math.round(p.sold * p.price * 100) / 100,
   }))
     .sort((a, b) => b.revenue - a.revenue)
-    .slice(0, 10)
+    .slice(0, limit)
 }
 
 export function mockCategories(): Category[] {

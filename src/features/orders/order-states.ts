@@ -58,3 +58,16 @@ export function toneFromName(name: string | undefined): StatusTone {
   if (/espera|aguard|pendente|pagamento/.test(n)) return 'pending'
   return 'pending'
 }
+
+/**
+ * Um estado é "em risco" (aguarda pagamento) quando o seu tom é `pending`.
+ * Resolve pelo NOME quando a API o dá (dados reais), senão pelo catálogo via id
+ * (mock e fallback). Capta os Multibanco/MB WAY gerados e nunca pagos.
+ */
+export function isAwaitingPayment(
+  label: string | undefined,
+  id: number,
+): boolean {
+  const tone = label ? toneFromName(label) : orderState(id).tone
+  return tone === 'pending'
+}

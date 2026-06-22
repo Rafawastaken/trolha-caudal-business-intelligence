@@ -4,6 +4,7 @@ import { usePeriod } from '@/lib/period'
 
 import { CategoriesCard } from '../components/categories-card'
 import { LowStockCard } from '../components/low-stock-card'
+import { ReorderCard } from '../components/reorder-card'
 import { TopProductsCard } from '../components/top-products-card'
 import { VouchersCard } from '../components/vouchers-card'
 
@@ -16,6 +17,8 @@ export function ProductsPage() {
         title="Produtos & Stock"
         description={`Best-sellers, categorias e stock · ${formatPtDate(period.from)} – ${formatPtDate(period.to)}`}
       />
+
+      <ReorderCard />
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <div className="lg:col-span-2">

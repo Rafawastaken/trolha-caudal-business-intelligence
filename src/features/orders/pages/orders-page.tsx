@@ -8,6 +8,7 @@ import { notifyInfo } from '@/lib/toast'
 import { usePeriod } from '@/lib/period'
 
 import { OrderStatesCard } from '../components/order-states-card'
+import { OrdersAtRiskCard } from '../components/orders-at-risk-card'
 import { OrdersFilters } from '../components/orders-filters'
 import { OrdersPagination } from '../components/orders-pagination'
 import { OrdersSummary } from '../components/orders-summary'
@@ -104,6 +105,8 @@ export function OrdersPage() {
       />
 
       <OrdersSummary />
+
+      <OrdersAtRiskCard />
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <div className="lg:col-span-2">

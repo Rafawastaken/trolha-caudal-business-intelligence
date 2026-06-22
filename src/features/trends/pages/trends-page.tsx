@@ -3,9 +3,12 @@ import { formatPtDate } from '@/lib/dates'
 import { usePeriod } from '@/lib/period'
 
 import { AbandonedCartsCard } from '../components/abandoned-carts-card'
+import { AbandonedCartsDetailCard } from '../components/abandoned-carts-detail-card'
+import { ConsentCard } from '../components/consent-card'
 import { DailyTrendChart } from '../components/daily-trend-chart'
 import { HourChart } from '../components/hour-chart'
 import { MonthlyChart } from '../components/monthly-chart'
+import { TrafficCard } from '../components/traffic-card'
 import { TrendsSummary } from '../components/trends-summary'
 import { WeekdayChart } from '../components/weekday-chart'
 
@@ -23,12 +26,23 @@ export function TrendsPage() {
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <div className="lg:col-span-2">
+          <TrafficCard />
+        </div>
+        <div>
+          <ConsentCard />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+        <div className="lg:col-span-2">
           <DailyTrendChart />
         </div>
         <div>
           <AbandonedCartsCard />
         </div>
       </div>
+
+      <AbandonedCartsDetailCard />
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <div>

@@ -1,4 +1,7 @@
 import { useCallback, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+
+import { usePeriod } from '@/lib/period'
 
 import { useAssistantContext } from './context'
 import { streamAssistant, type ChatTurn } from './gemini'
@@ -20,6 +23,8 @@ export function useAssistant() {
   const [streaming, setStreaming] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const { json } = useAssistantContext()
+  const { period } = usePeriod()
+  const navigate = useNavigate()
   const busyRef = useRef(false)
 
   const send = useCallback(
@@ -45,7 +50,10 @@ export function useAssistant() {
 
       try {
         let acc = ''
-        for await (const chunk of streamAssistant(history, json)) {
+        for await (const chunk of streamAssistant(history, json, {
+          period,
+          navigate,
+        })) {
           acc += chunk
           setMessages((prev) =>
             prev.map((m) => (m.id === replyId ? { ...m, content: acc } : m)),
@@ -70,7 +78,7 @@ export function useAssistant() {
         busyRef.current = false
       }
     },
-    [messages, json],
+    [messages, json, period, navigate],
   )
 
   const reset = useCallback(() => {

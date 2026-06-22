@@ -31,6 +31,19 @@ export function formatPtDate(s: string): string {
 }
 
 /**
+ * Número de dias cobertos por um intervalo [from, to] de ISO dates, INCLUSIVO
+ * em ambos os extremos (um único dia = 1, não 0). É o divisor correto para
+ * calcular velocidade de venda (unidades/dia) a partir do total do período.
+ * Devolve no mínimo 1 para nunca dividir por zero.
+ */
+export function daysInRange(from: string, to: string): number {
+  const a = fromIsoDate(from).getTime();
+  const b = fromIsoDate(to).getTime();
+  const diff = Math.round((b - a) / 86_400_000);
+  return Math.max(1, diff + 1);
+}
+
+/**
  * Devolve o intervalo "últimos N dias" terminando hoje, em ISO dates.
  * Útil como default para filtros de data.
  */

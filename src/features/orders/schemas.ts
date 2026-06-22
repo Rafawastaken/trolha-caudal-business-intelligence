@@ -45,6 +45,23 @@ export const ordersListSchema = z.object({
 })
 export type OrdersList = z.infer<typeof ordersListSchema>
 
+/**
+ * Encomendas em risco — as que aguardam pagamento, agregadas para o card
+ * acionável. Derivado (não é uma shape da API): cruza /states com /orders-list.
+ */
+export type OrdersAtRisk = {
+  /** Linhas em risco, ordenadas por valor (desc). */
+  rows: OrderRow[]
+  /** Soma do valor das linhas obtidas (€ em risco). */
+  totalAtRisk: number
+  /** Total de encomendas em risco no período (de meta). */
+  count: number
+  /** Quantas foram efetivamente obtidas para a soma. */
+  fetched: number
+  /** count > fetched → a soma é parcial (há mais para lá do limite). */
+  truncated: boolean
+}
+
 export const paymentBreakdownItemSchema = z.object({
   method: z.string(),
   orders: z.number(),

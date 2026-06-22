@@ -5,16 +5,22 @@ import { usePeriod } from '@/lib/period'
 
 import {
   fetchAbandonedCarts,
+  fetchAbandonedCartsDetail,
+  fetchConsent,
   fetchDaily,
   fetchHour,
   fetchMonthly,
+  fetchTraffic,
   fetchWeekday,
 } from './api'
 import {
   mockAbandonedCarts,
+  mockAbandonedCartsDetail,
+  mockConsent,
   mockDaily,
   mockHour,
   mockMonthly,
+  mockTraffic,
   mockWeekday,
 } from './mock'
 
@@ -32,6 +38,12 @@ export const trendsKeys = {
     [...trendsKeys.all, 'hour', from, to] as const,
   abandoned: (from: string, to: string) =>
     [...trendsKeys.all, 'abandoned', from, to] as const,
+  abandonedDetail: (from: string, to: string) =>
+    [...trendsKeys.all, 'abandoned-detail', from, to] as const,
+  traffic: (from: string, to: string) =>
+    [...trendsKeys.all, 'traffic', from, to] as const,
+  consent: (from: string, to: string) =>
+    [...trendsKeys.all, 'consent', from, to] as const,
 }
 
 export function useDaily() {
@@ -86,5 +98,38 @@ export function useAbandonedCarts() {
       USE_MOCK
         ? Promise.resolve(mockAbandonedCarts())
         : fetchAbandonedCarts(period.from, period.to),
+  })
+}
+
+export function useAbandonedCartsDetail() {
+  const { period } = usePeriod()
+  return useQuery({
+    queryKey: trendsKeys.abandonedDetail(period.from, period.to),
+    queryFn: () =>
+      USE_MOCK
+        ? Promise.resolve(mockAbandonedCartsDetail(period.from, period.to))
+        : fetchAbandonedCartsDetail(period.from, period.to),
+  })
+}
+
+export function useTraffic() {
+  const { period } = usePeriod()
+  return useQuery({
+    queryKey: trendsKeys.traffic(period.from, period.to),
+    queryFn: () =>
+      USE_MOCK
+        ? Promise.resolve(mockTraffic(period.from, period.to))
+        : fetchTraffic(period.from, period.to),
+  })
+}
+
+export function useConsent() {
+  const { period } = usePeriod()
+  return useQuery({
+    queryKey: trendsKeys.consent(period.from, period.to),
+    queryFn: () =>
+      USE_MOCK
+        ? Promise.resolve(mockConsent())
+        : fetchConsent(period.from, period.to),
   })
 }

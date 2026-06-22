@@ -2,9 +2,12 @@ import { fromIsoDate, toIsoDate } from '@/lib/dates'
 
 import type {
   AbandonedCarts,
+  AbandonedCartsDetail,
+  Consent,
   DailyPoint,
   HourPoint,
   MonthlyPoint,
+  Traffic,
   WeekdayPoint,
 } from './schemas'
 
@@ -84,4 +87,85 @@ export function mockHour(): HourPoint[] {
 
 export function mockAbandonedCarts(): AbandonedCarts {
   return { abandoned: 190, converted: 28, rate: 87.2 }
+}
+
+export function mockTraffic(from: string, to: string): Traffic {
+  const days = daysBetween(from, to)
+  const daily = days.map((date) => {
+    const dow = fromIsoDate(date).getDay()
+    const weekend = dow === 0 || dow === 6 ? 0.5 : 1
+    const j = 0.7 + seeded(date + 't') * 0.6
+    const visits = Math.round(140 * weekend * j)
+    return {
+      date,
+      visits,
+      pageViews: Math.round(visits * (3 + seeded(date + 'p'))),
+      productViews: Math.round(visits * (1.2 + seeded(date + 'pv'))),
+    }
+  })
+  const sum = (k: 'visits' | 'pageViews' | 'productViews') =>
+    daily.reduce((a, d) => a + d[k], 0)
+  // "anterior" = ~8% abaixo para um delta positivo plausível.
+  const metric = (value: number) => ({
+    value,
+    previous: Math.round(value * 0.92),
+    delta: value === 0 ? 0 : (value - value * 0.92) / (value * 0.92),
+  })
+  return {
+    pageViews: metric(sum('pageViews')),
+    visits: metric(sum('visits')),
+    productViews: metric(sum('productViews')),
+    daily,
+  }
+}
+
+export function mockConsent(): Consent {
+  const granted = 412
+  const denied = 118
+  const partial = 36
+  const decided = granted + denied + partial
+  const visitors = Math.round(decided / 0.78)
+  return {
+    granted,
+    denied,
+    partial,
+    analyticsGranted: granted + partial,
+    grantRate: granted / decided,
+    decisionRate: decided / visitors,
+  }
+}
+
+const CART_CUSTOMERS = [
+  'Hidráulica Coelho, Lda',
+  'João Sousa',
+  'AgroRega Sul',
+  'Quinta do Vale',
+  'Construções Ferreira',
+  'Estufas do Oeste',
+  'Adega Cooperativa',
+  'Rega Norte, Lda',
+]
+
+export function mockAbandonedCartsDetail(
+  _from: string,
+  _to: string,
+  limit = 50,
+): AbandonedCartsDetail {
+  const rows = Array.from({ length: Math.min(limit, 12) }, (_, i) => {
+    const customer = CART_CUSTOMERS[i % CART_CUSTOMERS.length]
+    const value = Math.round((80 + seeded('cart' + i) * 540) * 100) / 100
+    return {
+      id: 5000 + i,
+      customer,
+      email: `${customer.split(' ')[0].toLowerCase()}@email.pt`,
+      items: 1 + Math.floor(seeded('it' + i) * 4),
+      value,
+    }
+  }).sort((a, b) => b.value - a.value)
+  // Vista "com contacto": resumo restrito aos carrinhos recuperáveis.
+  const value = Math.round(rows.reduce((a, r) => a + r.value, 0) * 2.4 * 100) / 100
+  return {
+    summary: { carts: 52, withCustomer: 52, value },
+    rows,
+  }
 }

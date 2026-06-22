@@ -9,6 +9,7 @@ import {
   refundsSchema,
   stateBreakdownItemSchema,
   type OrderDetail,
+  type OrdersAtRisk,
   type OrdersList,
   type OrdersListParams,
   type OrdersSummary,
@@ -16,7 +17,12 @@ import {
   type Refunds,
   type StateBreakdownItem,
 } from './schemas'
+import { isAwaitingPayment } from './order-states'
 import { z } from 'zod'
+
+// Quantas encomendas em risco trazer por estado para somar o "valor em risco".
+// Acima disto a soma é marcada como parcial em vez de paginar tudo.
+const RISK_FETCH_LIMIT = 100
 
 // A API real usa snake_case e nomes diferentes do modelo canónico da UI. Cada
 // `normalize*`/mapeamento abaixo é o ponto único a ajustar se a shape mudar.
@@ -113,6 +119,48 @@ function normalizeOrderRow(raw: unknown): unknown {
     stateId: stateId ?? 0,
     stateLabel,
     payment: String(o.payment ?? o.payment_method ?? o.metodo ?? '—'),
+  }
+}
+
+/**
+ * Encomendas em risco (aguardam pagamento) no período. Descobre o(s) estado(s)
+ * "pending" via /states, puxa as encomendas de cada um e agrega — ordenadas por
+ * valor (desc) com o total em risco. Tudo a partir dos endpoints atuais.
+ */
+export async function fetchOrdersAtRisk(
+  from: string,
+  to: string,
+): Promise<OrdersAtRisk> {
+  const states = await fetchStates(from, to)
+  const pending = states.filter((s) => isAwaitingPayment(s.label, s.id))
+  if (pending.length === 0) {
+    return { rows: [], totalAtRisk: 0, count: 0, fetched: 0, truncated: false }
+  }
+
+  const lists = await Promise.all(
+    pending.map((s) =>
+      fetchOrdersList({
+        from,
+        to,
+        page: 1,
+        per_page: RISK_FETCH_LIMIT,
+        state: s.id,
+      }),
+    ),
+  )
+
+  const rows = lists
+    .flatMap((l) => l.rows)
+    .sort((a, b) => b.total - a.total)
+  const count = lists.reduce((a, l) => a + l.meta.total, 0)
+  const totalAtRisk = rows.reduce((a, r) => a + r.total, 0)
+
+  return {
+    rows,
+    totalAtRisk,
+    count,
+    fetched: rows.length,
+    truncated: count > rows.length,
   }
 }
 

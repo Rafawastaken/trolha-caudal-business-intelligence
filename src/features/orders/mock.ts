@@ -1,9 +1,10 @@
 import { toIsoDate } from '@/lib/dates'
 
-import { isValidState, ORDER_STATES } from './order-states'
+import { isAwaitingPayment, isValidState, ORDER_STATES } from './order-states'
 import type {
   OrderDetail,
   OrderRow,
+  OrdersAtRisk,
   OrdersList,
   OrdersListParams,
   OrdersSummary,
@@ -177,6 +178,24 @@ export function mockOrdersList(params: OrdersListParams): OrdersList {
   return {
     rows: rows.slice(start, start + per_page),
     meta: { total, page: safePage, per_page, pages },
+  }
+}
+
+export function mockOrdersAtRisk(from: string, to: string): OrdersAtRisk {
+  const pending = mockStates(from, to).filter((s) =>
+    isAwaitingPayment(s.label, s.id),
+  )
+  const lists = pending.map((s) =>
+    mockOrdersList({ from, to, page: 1, per_page: 100, state: s.id }),
+  )
+  const rows = lists.flatMap((l) => l.rows).sort((a, b) => b.total - a.total)
+  const count = lists.reduce((a, l) => a + l.meta.total, 0)
+  return {
+    rows,
+    totalAtRisk: rows.reduce((a, r) => a + r.total, 0),
+    count,
+    fetched: rows.length,
+    truncated: count > rows.length,
   }
 }
 

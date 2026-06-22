@@ -5,6 +5,7 @@ import { usePeriod } from '@/lib/period'
 
 import {
   fetchOrder,
+  fetchOrdersAtRisk,
   fetchOrdersList,
   fetchOrdersSummary,
   fetchPayments,
@@ -13,6 +14,7 @@ import {
 } from './api'
 import {
   mockOrder,
+  mockOrdersAtRisk,
   mockOrdersList,
   mockOrdersSummary,
   mockPayments,
@@ -33,6 +35,8 @@ export const ordersKeys = {
     [...ordersKeys.all, 'payments', from, to] as const,
   states: (from: string, to: string) =>
     [...ordersKeys.all, 'states', from, to] as const,
+  atRisk: (from: string, to: string) =>
+    [...ordersKeys.all, 'at-risk', from, to] as const,
   list: (params: OrdersListParams) =>
     [...ordersKeys.all, 'list', params] as const,
   detail: (id: number) => [...ordersKeys.all, 'detail', id] as const,
@@ -79,6 +83,18 @@ export function useOrderStates() {
       USE_MOCK
         ? Promise.resolve(mockStates(period.from, period.to))
         : fetchStates(period.from, period.to),
+  })
+}
+
+/** Encomendas que aguardam pagamento — lista acionável + valor em risco. */
+export function useOrdersAtRisk() {
+  const { period } = usePeriod()
+  return useQuery({
+    queryKey: ordersKeys.atRisk(period.from, period.to),
+    queryFn: () =>
+      USE_MOCK
+        ? Promise.resolve(mockOrdersAtRisk(period.from, period.to))
+        : fetchOrdersAtRisk(period.from, period.to),
   })
 }
 

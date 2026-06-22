@@ -8,7 +8,10 @@ import { usePeriod } from '@/lib/period'
 
 import { KpiGrid } from '../components/kpi-grid'
 import { FunnelCard } from '../components/funnel-card'
+import { LiveNowCard } from '../components/live-now-card'
+import { RecoverableCard } from '../components/recoverable-card'
 import { RevenueTrendCard } from '../components/revenue-trend-card'
+import { TrafficMiniCard } from '../components/traffic-mini-card'
 import { useOverview } from '../queries'
 
 export function DashboardPage() {
@@ -37,6 +40,13 @@ export function DashboardPage() {
       {data && (
         <>
           <KpiGrid kpis={data.kpis} daily={data.daily} />
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <LiveNowCard />
+            <TrafficMiniCard />
+            <RecoverableCard />
+          </div>
+
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
             <div className="lg:col-span-2">
               <RevenueTrendCard daily={data.daily} />
@@ -61,6 +71,11 @@ function DashboardSkeleton() {
             <Skeleton key={i} className="h-28 rounded-xl" />
           ))}
         </div>
+      </div>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <Skeleton key={i} className="h-32 rounded-xl" />
+        ))}
       </div>
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Skeleton className="h-96 rounded-xl lg:col-span-2" />
